@@ -1,0 +1,396 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Manglish to Malayalam Converter | Easy & Instant Transliteration</title>
+  <base href="/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="A simple and fast tool to convert Manglish (Malayalam written in English script) into the native Malayalam script. Works offline." />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="google-site-verification" content="Jckt0D42OYbsPcM_iaRfgFkfhtDDXYMrnyXVXG67sWU" />
+  <style>
+    /* Custom scrollbar for a more modern look */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1f2937; /* bg-gray-800 */
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #4b5563; /* bg-gray-600 */
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #6b7280; /* bg-gray-500 */
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Manglish to Malayalam Converter",
+    "description": "A web application to transliterate Manglish (Malayalam written in English letters) to the official Malayalam script.",
+    "applicationCategory": "ProductivityApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires a modern web browser with JavaScript enabled.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0"
+    }
+  }
+  </script>
+</head>
+<body class="bg-gray-900">
+  <div class="min-h-screen bg-gray-900 text-gray-200 font-sans flex flex-col p-4 md:p-8">
+    <header class="text-center mb-8">
+      <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500">
+        Manglish to Malayalam Converter
+      </h1>
+      <p class="mt-2 text-lg text-gray-400">Simple and Fast Transliteration</p>
+    </header>
+
+    <main class="flex-grow flex flex-col gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
+        <!-- Input Panel -->
+        <div class="flex flex-col bg-gray-800 rounded-lg shadow-lg p-4">
+          <div class="flex justify-between items-center mb-2">
+            <label for="manglish-input" class="text-sm font-semibold text-gray-300">MANGLISH</label>
+            <button id="clear-btn" title="Clear text"
+              class="p-2 rounded-full text-gray-400 hover:bg-gray-700 hover:text-white transition-colors duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
+          <textarea id="manglish-input" placeholder="e.g., ente peru..."
+            class="flex-grow bg-gray-900 text-gray-200 rounded-md p-3 w-full resize-none focus:ring-2 focus:ring-teal-500 focus:outline-none placeholder-gray-500 text-lg"></textarea>
+        </div>
+
+        <!-- Output Panel -->
+        <div class="flex flex-col bg-gray-800 rounded-lg shadow-lg p-4">
+          <div class="flex justify-between items-center mb-2">
+            <label class="text-sm font-semibold text-gray-300">MALAYALAM</label>
+            <button id="copy-btn" title="Copy to clipboard"
+              class="p-2 rounded-full text-gray-400 hover:bg-gray-700 hover:text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+              <svg id="copy-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              <svg id="copied-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400 hidden"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </button>
+          </div>
+          <div lang="ml"
+            class="flex-grow bg-gray-900 text-gray-200 rounded-md p-3 w-full relative flex items-center justify-center">
+            <p id="output-placeholder" class="text-gray-500">Your Malayalam text will appear here.</p>
+            <p id="output-text" class="text-xl whitespace-pre-wrap w-full hidden"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button id="translate-btn"
+          class="bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white font-bold py-3 px-12 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100">
+          <span>Translate</span>
+        </button>
+      </div>
+    </main>
+
+    <!-- SEO Content Section -->
+    <div class="mt-16 max-w-4xl mx-auto p-8 bg-gray-800 rounded-lg shadow-2xl text-gray-300 space-y-10">
+      
+      <section>
+        <h2 class="text-3xl font-bold text-teal-400 mb-4 border-b-2 border-teal-500 pb-2">About the Manglish to Malayalam Converter</h2>
+        <p class="leading-relaxed">
+          Manglish is the practice of using English letters to write Malayalam words phonetically. This style has become incredibly popular for texting and social media, allowing users to type in Malayalam without a dedicated keyboard. 
+          Our free tool is designed to bridge this gap effortlessly, instantly and accurately converting Manglish text into the native Malayalam script.
+        </p>
+        <p class="mt-4 leading-relaxed">
+          This tool operates entirely on your device (client-side), which means the text you enter never leaves your browser. This ensures lightning-fast performance and complete privacy for your data.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-3xl font-bold text-teal-400 mb-4 border-b-2 border-teal-500 pb-2">How to Use the Tool</h2>
+        <ol class="list-decimal list-inside space-y-3 leading-relaxed text-lg">
+          <li><strong>Enter Text:</strong> Type or paste your Manglish text into the left input box.</li>
+          <li><strong>Press Translate:</strong> Click the "Translate" button located below the boxes.</li>
+          <li><strong>Get the Result:</strong> The converted Malayalam text will instantly appear in the right box.</li>
+          <li><strong>Copy the Text:</strong> Use the copy icon in the top-right corner of the output box to copy the text to your clipboard.</li>
+        </ol>
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "HowTo",
+          "name": "How to Convert Manglish to Malayalam",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "text": "Enter the Manglish text into the input box on the left panel."
+            },
+            {
+              "@type": "HowToStep",
+              "text": "Click the 'Translate' button located below the input panels."
+            },
+            {
+              "@type": "HowToStep",
+              "text": "The converted Malayalam text will appear immediately in the output box on the right."
+            },
+            {
+              "@type": "HowToStep",
+              "text": "Use the copy button on the top right of the output panel to copy the Malayalam text to your clipboard."
+            }
+          ]
+        }
+        </script>
+      </section>
+
+      <section>
+        <h2 class="text-3xl font-bold text-teal-400 mb-4 border-b-2 border-teal-500 pb-2">Frequently Asked Questions</h2>
+        <div class="space-y-4">
+          <div>
+            <h3 class="text-xl font-semibold text-blue-400">Is this tool free?</h3>
+            <p>Yes, this tool is completely free to use with no limitations.</p>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-blue-400">Does it work offline?</h3>
+            <p>Absolutely. The entire transliteration process happens locally in your browser, so you don't need an internet connection to use it.</p>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-blue-400">Is my data safe?</h3>
+            <p>Yes, your privacy is protected. Since the conversion happens on your device, none of the text you enter is ever sent to a server.</p>
+          </div>
+        </div>
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Is the Manglish to Malayalam converter free to use?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, this tool is completely free to use without any limits."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does this tool work offline?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Absolutely. The entire transliteration process happens locally in your browser, so you don't need an internet connection to use it."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is my data secure?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, your privacy is protected. Since the conversion happens on your device, any text you enter is never sent to a server."
+              }
+            }
+          ]
+        }
+        </script>
+      </section>
+    </div>
+
+    <footer class="text-center mt-8 text-gray-500 text-sm">
+      <p>A Simple Transliteration Tool</p>
+    </footer>
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const manglishInput = document.getElementById('manglish-input');
+    const outputPlaceholder = document.getElementById('output-placeholder');
+    const outputText = document.getElementById('output-text');
+    const translateBtn = document.getElementById('translate-btn');
+    const clearBtn = document.getElementById('clear-btn');
+    const copyBtn = document.getElementById('copy-btn');
+    const copyIcon = document.getElementById('copy-icon');
+    const copiedIcon = document.getElementById('copied-icon');
+
+    const transliterationMap = {
+        'sth': 'sth', // placeholder for complex ligatures
+        'a': 'അ', 'aa': 'ആ', 'i': 'ഇ', 'ee': 'ഈ', 'u': 'ഉ', 'oo': 'ഊ', 'ri': 'ഋ',
+        'e': 'എ', 'ea': 'ഏ', 'ai': 'ഐ', 'o': 'ഒ', 'oa': 'ഓ', 'au': 'ഔ',
+        'am': 'അം', 'a:': 'അഃ',
+        'k': 'ക്', 'kh': 'ഖ്', 'g': 'ഗ്', 'gh': 'ഘ്', 'ng': 'ങ്',
+        'ch': 'ച്', 'chh': 'ഛ്', 'j': 'ജ്', 'jh': 'ഝ്', 'nj': 'ഞ്',
+        'T': 'ട്', 'Th': 'ഠ്', 'D': 'ഡ്', 'Dh': 'ഢ്', 'N': 'ണ്',
+        't': 'ത്', 'th': 'ഥ്', 'd': 'ദ്', 'dh': 'ധ്', 'n': 'ന്',
+        'p': 'പ്', 'ph': 'ഫ്', 'f': 'ഫ്', 'b': 'ബ്', 'bh': 'ഭ്', 'm': 'മ്',
+        'y': 'യ്', 'r': 'ര്', 'l': 'ല്', 'v': 'വ്', 'w': 'വ്',
+        'sh': 'ശ്', 'shh': 'ഷ്', 's': 'സ്', 'h': 'ഹ്',
+        'L': 'ള്', 'zh': 'ഴ്', 'R': 'റ്',
+        // Vowel signs
+        'ka': 'ക', 'kaa': 'കാ', 'ki': 'കി', 'kee': 'കീ', 'ku': 'കു', 'koo': 'കൂ', 'kri': 'കൃ',
+        'ke': 'കെ', 'kea': 'കേ', 'kai': 'കൈ', 'ko': 'കൊ', 'koa': 'കോ', 'kau': 'കൗ', 'kam': 'കം',
+        'kha': 'ഖ', 'khaa': 'ഖാ', 'khi': 'ഖി', 'khee': 'ഖീ', 'khu': 'ഖു', 'khoo': 'ഖൂ', 'khri': 'ഖൃ',
+        'khe': 'ഖെ', 'khea': 'ഖേ', 'khai': 'ഖൈ', 'kho': 'ഖൊ', 'khoa': 'ഖോ', 'khau': 'ഖൗ', 'kham': 'ഖം',
+        'ga': 'ഗ', 'gaa': 'ഗാ', 'gi': 'ഗി', 'gee': 'ഗീ', 'gu': 'ഗു', 'goo': 'ഗൂ', 'gri': 'ഗൃ',
+        'ge': 'ഗെ', 'gea': 'ഗേ', 'gai': 'ഗൈ', 'go': 'ഗൊ', 'goa': 'ഗോ', 'gau': 'ഗൗ', 'gam': 'ഗം',
+        'gha': 'ഘ', 'ghaa': 'ഘാ', 'ghi': 'ഘി', 'ghee': 'ഘീ', 'ghu': 'ഘു', 'ghoo': 'ഘൂ', 'ghri': 'ഘൃ',
+        'ghe': 'ഘെ', 'ghea': 'ഘേ', 'ghai': 'ഘൈ', 'gho': 'ഘൊ', 'ghoa': 'ഘോ', 'ghau': 'ഘൗ', 'gham': 'ഘം',
+        'nga': 'ങ', 'ngaa': 'ങാ', 'ngi': 'ങി', 'ngee': 'ങീ', 'ngu': 'ങു', 'ngoo': 'ങൂ', 'ngri': 'ങൃ',
+        'nge': 'ങെ', 'ngea': 'ങേ', 'ngai': 'ങൈ', 'ngo': 'ങൊ', 'ngoa': 'ങോ', 'ngau': 'ങൗ', 'ngam': 'ങം',
+        'cha': 'ച', 'chaa': 'ചാ', 'chi': 'ചി', 'chee': 'ചീ', 'chu': 'ചു', 'choo': 'ചൂ', 'chri': 'ചൃ',
+        'che': 'ചെ', 'chea': 'ചേ', 'chai': 'ചൈ', 'cho': 'ചൊ', 'choa': 'ചോ', 'chau': 'ചൗ', 'cham': 'ചം',
+        'chha': 'ഛ', 'chhaa': 'ഛാ', 'chhi': 'ഛി', 'chhee': 'ഛീ', 'chhu': 'ഛു', 'chhoo': 'ഛൂ', 'chhri': 'ഛൃ',
+        'chhe': 'ഛെ', 'chhea': 'ഛേ', 'chhai': 'ഛൈ', 'chho': 'ഛൊ', 'chhoa': 'ഛോ', 'chhau': 'ഛൗ', 'chham': 'ഛം',
+        'ja': 'ജ', 'jaa': 'ജാ', 'ji': 'ജി', 'jee': 'ജീ', 'ju': 'ജു', 'joo': 'ജൂ', 'jri': 'ജൃ',
+        'je': 'ജെ', 'jea': 'ജേ', 'jai': 'ജൈ', 'jo': 'ജൊ', 'joa': 'ജോ', 'jau': 'ജൗ', 'jam': 'ജം',
+        'jha': 'ഝ', 'jhaa': 'ഝാ', 'jhi': 'ഝി', 'jhee': 'ഝീ', 'jhu': 'ഝു', 'jhoo': 'ഝൂ', 'jhri': 'ഝൃ',
+        'jhe': 'ഝെ', 'jhea': 'ഝേ', 'jhai': 'ഝൈ', 'jho': 'ഝൊ', 'jhoa': 'ഝോ', 'jhau': 'ഝൗ', 'jham': 'ഝം',
+        'nja': 'ഞ', 'njaa': 'ഞാ', 'nji': 'ഞി', 'njee': 'ഞീ', 'nju': 'ഞു', 'njoo': 'ഞൂ', 'njri': 'ഞൃ',
+        'nje': 'ഞെ', 'njea': 'ഞ്ഞേ', 'njai': 'ഞൈ', 'njo': 'ഞൊ', 'njoa': 'ഞോ', 'njau': 'ഞൗ', 'njam': 'ഞം',
+        'Ta': 'ട', 'Taa': 'ടാ', 'Ti': 'ടി', 'Tee': 'ടീ', 'Tu': 'ടു', 'Too': 'ടൂ', 'Tri': 'ടൃ',
+        'Te': 'ടെ', 'Tea': 'ടേ', 'Tai': 'ടൈ', 'To': 'ടൊ', 'Toa': 'ടോ', 'Tau': 'ടൗ', 'Tam': 'ടം',
+        'Tha': 'ഠ', 'Thaa': 'ഠാ', 'Thi': 'ഠി', 'Thee': 'ഠീ', 'Thu': 'ഠു', 'Thoo': 'ഠൂ', 'Thri': 'ഠൃ',
+        'The': 'ഠെ', 'Thea': 'ഠേ', 'Thai': 'ഠൈ', 'Tho': 'ഠൊ', 'Thoa': 'ഠോ', 'Thau': 'ഠൗ', 'Tham': 'ഠം',
+        'Da': 'ഡ', 'Daa': 'ഡാ', 'Di': 'ഡി', 'Dee': 'ഡീ', 'Du': 'ഡു', 'Doo': 'ഡൂ', 'Dri': 'ഡൃ',
+        'De': 'ഡെ', 'Dea': 'ഡേ', 'Dai': 'ഡൈ', 'Do': 'ഡൊ', 'Doa': 'ഡോ', 'Dau': 'ഡൗ', 'Dam': 'ഡം',
+        'Dha': 'ഢ', 'Dhaa': 'ഢാ', 'Dhi': 'ഢി', 'Dhee': 'ഢീ', 'Dhu': 'ഢു', 'Dhoo': 'ഢൂ', 'Dhri': 'ഢൃ',
+        'Dhe': 'ഢെ', 'Dhea': 'ഢേ', 'Dhai': 'ഢൈ', 'Dho': 'ഢൊ', 'Dhoa': 'ഢോ', 'Dhau': 'ഢൗ', 'Dham': 'ഢം',
+        'Na': 'ണ', 'Naa': 'ണാ', 'Ni': 'ണി', 'Nee': 'ണീ', 'Nu': 'ണു', 'Noo': 'ണൂ', 'Nri': 'ണൃ',
+        'Ne': 'ണെ', 'Nea': 'ണേ', 'Nai': 'ണൈ', 'No': 'ണൊ', 'Noa': 'ണോ', 'Nau': 'ണൗ', 'Nam': 'ണം',
+        'ta': 'ത', 'thaa': 'താ', 'ti': 'തി', 'tee': 'തീ', 'tu': 'തു', 'too': 'തൂ', 'tri': 'തൃ',
+        'te': 'തെ', 'tea': 'തേ', 'tai': 'തൈ', 'to': 'തൊ', 'toa': 'തോ', 'tau': 'തൗ', 'tam': 'തം',
+        'tha': 'ഥ', 'thaa': 'ഥാ', 'thi': 'ഥി', 'thee': 'ഥീ', 'thu': 'ഥു', 'thoo': 'ഥൂ', 'thri': 'ഥൃ',
+        'the': 'ഥെ', 'thea': 'ഥേ', 'thai': 'ഥൈ', 'tho': 'ഥൊ', 'thoa': 'ഥോ', 'thau': 'ഥൗ', 'tham': 'ഥം',
+        'da': 'ദ', 'daa': 'ദാ', 'di': 'ദി', 'dee': 'ദീ', 'du': 'ദു', 'doo': 'ദൂ', 'dri': 'ദൃ',
+        'de': 'ദെ', 'dea': 'ദേ', 'dai': 'ദൈ', 'do': 'ദൊ', 'doa': 'ദോ', 'dau': 'ദൗ', 'dam': 'ദം',
+        'dha': 'ധ', 'dhaa': 'ധാ', 'dhi': 'ധി', 'dhee': 'ധീ', 'dhu': 'ധു', 'dhoo': 'ധൂ', 'dhri': 'ധൃ',
+        'dhe': 'ധെ', 'dhea': 'ധേ', 'dhai': 'ധൈ', 'dho': 'ധൊ', 'dhoa': 'ധോ', 'dhau': 'ധൗ', 'dham': 'ധം',
+        'na': 'ന', 'naa': 'നാ', 'ni': 'നി', 'nee': 'നീ', 'nu': 'നു', 'noo': 'നൂ', 'nri': 'നൃ',
+        'ne': 'നെ', 'nea': 'നേ', 'nai': 'നൈ', 'no': 'နൊ', 'noa': 'നോ', 'nau': 'നൗ', 'nam': 'നം',
+        'pa': 'പ', 'paa': 'പാ', 'pi': 'പി', 'pee': 'പീ', 'pu': 'പു', 'poo': 'പൂ', 'pri': 'പൃ',
+        'pe': 'പെ', 'pea': 'പേ', 'pai': 'പൈ', 'po': 'പൊ', 'poa': 'പോ', 'pau': 'പൗ', 'pam': 'പം',
+        'pha': 'ഫ', 'phaa': 'ഫാ', 'phi': 'ഫി', 'phee': 'ഫീ', 'phu': 'ഫു', 'phoo': 'ഫൂ', 'phri': 'ഫൃ',
+        'phe': 'ഫെ', 'phea': 'ഫേ', 'phai': 'ഫൈ', 'pho': 'ഫൊ', 'phoa': 'ഫോ', 'phau': 'ഫൗ', 'pham': 'ഫം',
+        'fa': 'ഫ', 'faa': 'ഫാ', 'fi': 'ഫി', 'fee': 'ഫീ', 'fu': 'ഫു', 'foo': 'ഫൂ', 'fri': 'ഫൃ',
+        'fe': 'ഫെ', 'fea': 'ഫേ', 'fai': 'ഫൈ', 'fo': 'ഫൊ', 'foa': 'ഫോ', 'fau': 'ഫൗ', 'fam': 'ഫം',
+        'ba': 'ബ', 'baa': 'ബാ', 'bi': 'ബി', 'bee': 'ബീ', 'bu': 'ബു', 'boo': 'ബൂ', 'bri': 'ബൃ',
+        'be': 'ബെ', 'bea': 'ബേ', 'bai': 'ബൈ', 'bo': 'ബൊ', 'boa': 'ബോ', 'bau': 'ബൗ', 'bam': 'ബം',
+        'bha': 'ഭ', 'bhaa': 'ഭാ', 'bhi': 'ഭി', 'bhee': 'ഭീ', 'bhu': 'ഭു', 'bhoo': 'ഭൂ', 'bhri': 'ഭൃ',
+        'bhe': 'ഭെ', 'bhea': 'ഭേ', 'bhai': 'ഭൈ', 'bho': 'ഭൊ', 'bhoa': 'ഭോ', 'bhau': 'ഭൗ', 'bham': 'ഭം',
+        'ma': 'മ', 'maa': 'മാ', 'mi': 'മി', 'mee': 'മീ', 'mu': 'മു', 'moo': 'മൂ', 'mri': 'മൃ',
+        'me': 'മെ', 'mea': 'മേ', 'mai': 'മൈ', 'mo': 'മൊ', 'moa': 'മോ', 'mau': 'മൗ', 'mam': 'മം',
+        'ya': 'യ', 'yaa': 'യാ', 'yi': 'യി', 'yee': 'യീ', 'yu': 'യു', 'yoo': 'യൂ', 'yri': 'യൃ',
+        'ye': 'യെ', 'yea': 'യേ', 'yai': 'യൈ', 'yo': 'യൊ', 'yoa': 'യോ', 'yau': 'യൗ', 'yam': 'യം',
+        'ra': 'ര', 'raa': 'രാ', 'ri': 'രി', 'ree': 'രീ', 'ru': 'രു', 'roo': 'രൂ', 'rri': 'രൃ',
+        're': 'രെ', 'rea': 'രേ', 'rai': 'രൈ', 'ro': 'രൊ', 'roa': 'രോ', 'rau': 'രൗ', 'ram': 'രം',
+        'la': 'ല', 'laa': 'ലാ', 'li': 'ലി', 'lee': 'ലീ', 'lu': 'ലു', 'loo': 'ലൂ', 'lri': 'ലൃ',
+        'le': 'ലെ', 'lea': 'ലേ', 'lai': 'ലൈ', 'lo': 'ലൊ', 'loa': 'ലോ', 'lau': 'ലൗ', 'lam': 'ലം',
+        'va': 'വ', 'vaa': 'വാ', 'vi': 'വി', 'vee': 'വീ', 'vu': 'വു', 'voo': 'വൂ', 'vri': 'വൃ',
+        've': 'വെ', 'vea': 'വേ', 'vai': 'വൈ', 'vo': 'വൊ', 'voa': 'വോ', 'vau': 'വൗ', 'vam': 'വം',
+        'wa': 'വ', 'waa': 'വാ', 'wi': 'വി', 'wee': 'വീ', 'wu': 'വു', 'woo': 'വൂ', 'wri': 'വൃ',
+        'we': 'വെ', 'wea': 'വേ', 'wai': 'വൈ', 'wo': 'വൊ', 'woa': 'വോ', 'wau': 'വൗ', 'wam': 'വം',
+        'sha': 'ശ', 'shaa': 'ശാ', 'shi': 'ശി', 'shee': 'ശീ', 'shu': 'ശു', 'shoo': 'ശൂ', 'shri': 'ശൃ',
+        'she': 'ശെ', 'shea': 'ശേ', 'shai': 'ശൈ', 'sho': 'ശൊ', 'shoa': 'ശോ', 'shau': 'ശൗ', 'sham': 'ശം',
+        'shha': 'ഷ', 'shhaa': 'ഷാ', 'shhi': 'ഷി', 'shhee': 'ഷീ', 'shhu': 'ഷു', 'shhoo': 'ഷൂ', 'shhri': 'ഷൃ',
+        'shhe': 'ഷെ', 'shhea': 'ഷേ', 'shhai': 'ഷൈ', 'shho': 'ഷൊ', 'shhoa': 'ഷോ', 'shhau': 'ഷൗ', 'shham': 'ഷം',
+        'sa': 'സ', 'saa': 'സാ', 'si': 'സി', 'see': 'സീ', 'su': 'സു', 'soo': 'സൂ', 'sri': 'സൃ',
+        'se': 'സെ', 'sea': 'സേ', 'sai': 'സൈ', 'so': 'സൊ', 'soa': 'സോ', 'sau': 'സൗ', 'sam': 'സം',
+        'ha': 'ഹ', 'haa': 'ഹാ', 'hi': 'ഹി', 'hee': 'ഹീ', 'hu': 'ഹു', 'hoo': 'ഹൂ', 'hri': 'ഹൃ',
+        'he': 'ഹെ', 'hea': 'ഹേ', 'hai': 'ഹൈ', 'ho': 'ഹൊ', 'hoa': 'ഹോ', 'hau': 'ഹൗ', 'ham': 'ഹം',
+        'La': 'ള', 'Laa': 'ളാ', 'Li': 'ളി', 'Lee': 'ളീ', 'Lu': 'ളു', 'Loo': 'ളൂ', 'Lri': 'ളൃ',
+        'Le': 'ളെ', 'Lea': 'ളേ', 'Lai': 'ളൈ', 'Lo': 'ളൊ', 'Loa': 'ളോ', 'Lau': 'ളൗ', 'Lam': 'ളം',
+        'zha': 'ഴ', 'zhaa': 'ഴാ', 'zhi': 'ഴി', 'zhee': 'ഴീ', 'zhu': 'ഴു', 'zhoo': 'ഴൂ', 'zhri': 'ഴൃ',
+        'zhe': 'ഴെ', 'zhea': 'ഴേ', 'zhai': 'ഴൈ', 'zho': 'ഴൊ', 'zhoa': 'ഴോ', 'zhau': 'ഴൗ', 'zham': 'ഴം',
+        'Ra': 'റ', 'Raa': 'റാ', 'Ri': 'റി', 'Ree': 'റീ', 'Ru': 'റു', 'Roo': 'റൂ', 'Rri': 'റൃ',
+        'Re': 'റെ', 'Rea': 'റേ', 'Rai': 'റൈ', 'Ro': 'റൊ', 'Roa': 'റോ', 'Rau': 'റൗ', 'Ram': 'റം',
+         // Ligatures
+        'kk': 'ക്ക', 'gg': 'ഗ്ഗ', 'ṅṅ': 'ങ്ങ', 'cc': 'ച്ച', 'jj': 'ജ്ജ', 'ññ': 'ഞ്ഞ', 'ṭṭ': 'ട്ട',
+        'ṇṇ': 'ണ്ണ', 'tt': 'ത്ത', 'dd': 'ദ്ദ', 'nn': 'ന്ന', 'pp': 'പ്പ', 'bb': 'ബ്ബ', 'mm': 'മ്മ',
+        'yy': 'യ്യ', 'll': 'ല്ല', 'vv': 'വ്വ', 'śś': 'ശ്ശ', 'ṣṣ': 'ഷ്ഷ', 'ss': 'സ്സ', 'ḻḻ': 'ഴ്ഴ',
+        ' RR': 'റ്റ', 'mp': 'മ്പ്', 'nt': 'ന്റ്', 'nk': 'ങ്ക്', 'nch': 'ഞ്ച്',
+        'ng': 'ങ്ങ്'
+    };
+    
+    // Sort keys by length, descending, to prioritize longer matches
+    const sortedKeys = Object.keys(transliterationMap).sort((a, b) => b.length - a.length);
+
+    function transliterate(text) {
+        if (!text) return '';
+        let convertedText = text;
+        for (const key of sortedKeys) {
+            // Use a regex for global replacement of each key
+            convertedText = convertedText.replace(new RegExp(key, 'g'), transliterationMap[key]);
+        }
+        return convertedText;
+    }
+
+    function handleTranslate() {
+        const textToTranslate = manglishInput.value;
+        const translated = transliterate(textToTranslate);
+        
+        if (translated) {
+            outputText.textContent = translated;
+            outputText.classList.remove('hidden');
+            outputPlaceholder.classList.add('hidden');
+            copyBtn.disabled = false;
+        } else {
+            outputText.textContent = '';
+            outputText.classList.add('hidden');
+            outputPlaceholder.classList.remove('hidden');
+            copyBtn.disabled = true;
+        }
+    }
+    
+    function handleInputChange() {
+        const hasText = manglishInput.value.trim().length > 0;
+        translateBtn.disabled = !hasText;
+        if (!hasText) {
+            clearText();
+        }
+    }
+
+    function copyToClipboard() {
+        const text = outputText.textContent;
+        if (!text) return;
+
+        navigator.clipboard.writeText(text).then(() => {
+            copyIcon.classList.add('hidden');
+            copiedIcon.classList.remove('hidden');
+            setTimeout(() => {
+                copyIcon.classList.remove('hidden');
+                copiedIcon.classList.add('hidden');
+            }, 2000);
+        }).catch(err => console.error('Failed to copy text: ', err));
+    }
+
+    function clearText() {
+        manglishInput.value = '';
+        outputText.textContent = '';
+        outputText.classList.add('hidden');
+        outputPlaceholder.classList.remove('hidden');
+        translateBtn.disabled = true;
+        copyBtn.disabled = true;
+    }
+
+    // Initial state
+    translateBtn.disabled = true;
+    copyBtn.disabled = true;
+
+    // Event Listeners
+    translateBtn.addEventListener('click', handleTranslate);
+    manglishInput.addEventListener('input', handleInputChange);
+    clearBtn.addEventListener('click', clearText);
+    copyBtn.addEventListener('click', copyToClipboard);
+});
+</script>
+</body>
+</html>
